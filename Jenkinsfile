@@ -37,14 +37,14 @@ This is a test email triggered at the start of the Jenkins pipeline to verify em
         //         """
         //     }
         // }
-        stage('Secrets Scan (GitLeaks)') {
-            steps {
-                bat 'dir %WORKSPACE%' // optional debug
-                bat """
-                    docker run --rm -v "%WORKSPACE%:/repo" zricethezav/gitleaks:latest detect --source=/repo --no-git --config=/repo/.gitleaks.toml --redact --verbose
-                """
-            }
-        }
+        // stage('Secrets Scan (GitLeaks)') {
+        //     steps {
+        //         bat 'dir %WORKSPACE%' // optional debug
+        //         bat """
+        //             docker run --rm -v "%WORKSPACE%:/repo" zricethezav/gitleaks:latest detect --source=/repo --no-git --config=/repo/.gitleaks.toml --redact --verbose
+        //         """
+        //     }
+        // }
         stage('Secrets Scan (GitLeaks)') {
             steps {
                 echo 'Running Gitleaks Scan using Docker...'
