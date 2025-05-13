@@ -93,8 +93,8 @@ This is a test email triggered at the start of the Jenkins pipeline to verify em
         stage('Run Container') {
             steps {
                 script {
-                    sh "docker rm -f text-summary-container || true"
-                    sh "docker run -d --name text-summary-container -p 5000:5000 ${DOCKER_IMAGE}:${DOCKER_TAG}"
+                    bat 'docker rm -f text-summary-container || exit 0'
+                    bat "docker run -d --name text-summary-container -p 5000:5000 %DOCKER_IMAGE%:%DOCKER_TAG%"
                 }
             }
         }
@@ -102,17 +102,19 @@ This is a test email triggered at the start of the Jenkins pipeline to verify em
         stage('Smoke Test') {
             steps {
                 echo 'Running smoke test to verify the Flask app is live...'
-                sh """
-                    sleep 5
-                    STATUS_CODE=\$(curl -s -o /dev/null -w "%{http_code}" http://localhost:5000)
-                    if [ "\$STATUS_CODE" -ne 200 ]; then
-                        echo "Smoke test failed with HTTP status: \$STATUS_CODE"
-                        exit 1
-                    fi
-                    echo "Smoke test passed! App is responding with HTTP 200."
+                bat """
+                    timeout /t 5 >nul
+                    curl -s -o nul -w %%{http_code} http://localhost:5000 > status.txt
+                    set /p STATUS_CODE=<status.txt
+                    if NOT %%STATUS_CODE%%==200 (
+                        echo Smoke test failed with HTTP status: %%STATUS_CODE%%
+                        exit /b 1
+                    )
+                    echo Smoke test passed! App is responding with HTTP 200.
                 """
             }
         }
+
     }
 
     post {
