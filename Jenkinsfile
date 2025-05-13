@@ -57,10 +57,11 @@ This is a test email triggered at the start of the Jenkins pipeline to verify em
         stage('Unit & Function Tests') {
             steps {
                 echo 'Running basic unit and function tests...'
-                bat """
-                    pip install -r requirements.txt
-                    pip install pytest
-                    pytest tests/
+                bat "
+                    python -m pip install --upgrade pip
+                    python -m pip install -r requirements.txt
+                    python -m pip install pytest
+                    python -m pytest tests/
                 """
             }
         }
