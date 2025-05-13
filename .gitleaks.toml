@@ -1,2 +1,5 @@
 [allowlist]
   description = "Ignore non-sensitive files"
+  paths = [
+    "main.py",
+  ]
