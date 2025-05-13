@@ -25,7 +25,7 @@ This is a test email triggered at the start of the Jenkins pipeline to verify em
 
         stage('Clone') {
             steps {
-                git branch: 'docker-deploy', url: 'https://github.com/Fazil711/Text-Summary.git'
+                git branch: 'docker-deploy', url: 'https://github.com/kiran11621/text-summary-app.git'
             }
         }
 
@@ -42,6 +42,14 @@ This is a test email triggered at the start of the Jenkins pipeline to verify em
                 bat 'dir %WORKSPACE%' // optional debug
                 bat """
                     docker run --rm -v "%WORKSPACE%:/repo" zricethezav/gitleaks:latest detect --source=/repo --no-git --config=/repo/.gitleaks.toml --redact --verbose
+                """
+            }
+        }
+        stage('Secrets Scan (GitLeaks)') {
+            steps {
+                echo 'Running Gitleaks Scan using Docker...'
+                bat """ 
+                  docker run --rm -v %WORKSPACE%:/repo zricethezav/gitleaks:latest detect --source=/repo --no-git --config=/repo/.gitleaks.toml --redact --verbose 
                 """
             }
         }
