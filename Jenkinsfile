@@ -54,6 +54,17 @@ This is a test email triggered at the start of the Jenkins pipeline to verify em
             }
         }
 
+        stage('Unit & Function Tests') {
+            steps {
+                echo 'Running basic unit and function tests...'
+                bat """
+                    pip install -r requirements.txt
+                    pip install pytest
+                    pytest tests/
+                """
+            }
+        }
+
         stage('Build Docker Image') {
             steps {
                 script {
