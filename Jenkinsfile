@@ -113,27 +113,21 @@ This is a test email triggered at the start of the Jenkins pipeline to verify em
                 //     )
                 //     echo Smoke test passed! App is responding with HTTP 200.
                 // """
-                bat """
-                    @echo off
-                    setlocal enabledelayedexpansion
+                powershell '''
+                    Start-Sleep -Seconds 5
+                    $response = Invoke-WebRequest -Uri http://localhost:5000 -UseBasicParsing -TimeoutSec 10
+                    $statusCode = $response.StatusCode
 
-                    timeout /t 5 >nul
-                    curl -s -o nul -w %%{http_code} http://localhost:5000 > status.txt
+                    Write-Output "Received HTTP status: $statusCode"
 
-                    for /f %%i in (status.txt) do (
-                        set STATUS_CODE=%%i
-                    )
+                    if ($statusCode -ne 200) {
+                        Write-Error "Smoke test failed with HTTP status: $statusCode"
+                        exit 1
+                    } else {
+                        Write-Output "Smoke test passed! App is responding with HTTP 200."
+                    }
+                '''
 
-                    echo Received HTTP status: !STATUS_CODE!
-
-                    if NOT "!STATUS_CODE!"=="200" (
-                        echo Smoke test failed with HTTP status: !STATUS_CODE!
-                        exit /b 1
-                    )
-
-                    echo Smoke test passed! App is responding with HTTP 200.
-                    endlocal
-                """
             }
         }
     }
